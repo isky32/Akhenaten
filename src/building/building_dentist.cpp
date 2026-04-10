@@ -4,10 +4,19 @@
 #include "city/city_buildings.h"
 #include "io/gamefiles/lang.h"
 #include "widget/city/ornaments.h"
+#include "core/object_property.h"
 #include "js/js_game.h"
 #include "figuretype/figure_dentist.h"
 
 REPLICATE_STATIC_PARAMS_FROM_CONFIG(building_dentist);
+
+bvariant building_dentist::get_property(const xstring &domain, const xstring &name) const {
+    auto result = archive_helper::get(runtime_data(), name, domain == tags().building);
+    if (result) {
+        return result.value();
+    }
+    return building_impl::get_property(domain, name);
+}
 
 void building_dentist::update_graphic() {
     const xstring &animkey = can_play_animation()

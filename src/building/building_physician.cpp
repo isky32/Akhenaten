@@ -7,6 +7,7 @@
 #include "graphics/animation.h"
 #include "widget/city/ornaments.h"
 #include "figuretype/figure_physician.h"
+#include "core/object_property.h"
 #include "js/js_game.h"
 
 REPLICATE_STATIC_PARAMS_FROM_CONFIG(building_physician);
@@ -25,6 +26,14 @@ void building_physician::update_graphic() {
 void building_physician::update_month() {
     building_impl::update_month();
     runtime_data().residents_served_this_month = 0;
+}
+
+bvariant building_physician::get_property(const xstring &domain, const xstring &name) const {
+    auto result = archive_helper::get(runtime_data(), name, domain == tags().building);
+    if (result) {
+        return result.value();
+    }
+    return building_impl::get_property(domain, name);
 }
 
 bool building_physician::draw_ornaments_and_animations_height(painter &ctx, vec2i point, tile2i tile, color color_mask) {
