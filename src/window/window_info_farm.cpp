@@ -3,9 +3,11 @@
 #include "building/building.h"
 #include "city/object_info.h"
 #include "city/city_resource.h"
+#include "city/city_floods.h"
 #include "window/building/common.h"
 #include "graphics/window.h"
 #include "grid/floodplain.h"
+#include "grid/terrain.h"
 #include "game/game_config.h"
 
 struct info_window_farm : public building_info_window_t<info_window_farm> {
@@ -36,12 +38,12 @@ void info_window_farm::init(object_info &c) {
 
     if (b->is_floodplain_farm()) {
         // next flood info
-        int month_id = 8; // TODO: fetch flood info
+        int month_id = g_floods.expected_month();
         ui["flood_info"].text_var("%s %s", ui::str(177, 2), ui::str(160, month_id));
 
         // irrigated?
-        int is_not_irrigated = 0; // TODO: fetch irrigation info
-        ui["farm_state"] = ui::str(177, is_not_irrigated);
+        bool is_irrigated = map_terrain_exists_tile_in_area_with_type(b->tile, 3, TERRAIN_IRRIGATION_RANGE);
+        ui["farm_state"] = ui::str(177, is_irrigated ? 0 : 1);
         ui["farm_desc"] = ui::str(c.group_id, 1);
     } else {
         ui["farm_state"] = ui::str(c.group_id, 1);

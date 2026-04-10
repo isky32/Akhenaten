@@ -48,5 +48,7 @@ advisor_entertainment_window = {
                 zoo_cvg          : text_center({pos:[440, 105], size:[100, 20]}),
             }
         }),
+
+        hold_festival_btn : button({margin:{left:102, bottom:-78}, size:[300, 24], font:FONT_NORMAL_BLACK_ON_LIGHT}),
     }
 }

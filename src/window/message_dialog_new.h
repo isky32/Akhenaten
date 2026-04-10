@@ -49,10 +49,14 @@ namespace ui {
         void show_city_message(xstring text_id, int message_id, int year, int month, int param1, int param2, int message_advisor, bool use_popup);
         void setup_help_id(xstring helpid);
 
+        static constexpr int MAX_HISTORY = 200;
         struct history_item {
             int text_id;
             int scroll_position;
-        };       
+        };
+
+        history_item history[MAX_HISTORY];
+        int num_history = 0;
 
         xstring debug_text_id;
 

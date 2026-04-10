@@ -4,6 +4,7 @@
 #include "city/coverage.h"
 #include "city/city.h"
 #include "city/city_building_menu_ctrl.h"
+#include "city/buildings.h"
 #include "graphics/image.h"
 #include "graphics/graphics.h"
 #include "graphics/elements/generic_button.h"
@@ -13,6 +14,7 @@
 #include "graphics/text.h"
 #include "graphics/window.h"
 #include "window/hold_festival.h"
+#include "window/popup_dialog.h"
 #include "game/game.h"
 
 ui::advisor_entertainment_window g_advisor_entertainment_window;
@@ -75,6 +77,24 @@ void ui::advisor_entertainment_window::init() {
     advisor_window::init();
 
     ui["advice"] = ui::str(58, 7 + get_entertainment_advice());
+
+    if (g_city.festival.is_planned()) {
+        ui["hold_festival_btn"].enabled = false;
+        ui["hold_festival_btn"] = ui::str(58, 16);
+    } else {
+        ui["hold_festival_btn"].enabled = true;
+        ui["hold_festival_btn"] = ui::str(58, 16);
+        ui["hold_festival_btn"].onclick([] {
+            int has_square = g_city.buildings.count_total(BUILDING_FESTIVAL_SQUARE);
+            if (!has_square) {
+                return popup_dialog::show_ok("#popup_dialog_no_festival_square");
+            }
+
+            if (!g_city.festival.is_planned()) {
+                ui::hold_festival_window::show(true);
+            }
+        });
+    }
 }
 
 int ui::advisor_entertainment_window::handle_mouse(const mouse* m) {

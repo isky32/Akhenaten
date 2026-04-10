@@ -141,18 +141,15 @@ int ui::advisor_chief_window::draw_background(UiFlags flags) {
 
     // religion
     {
-        // todo
-        //    house_demands *demands = city_houses_demands();
-        //    if (demands->religion == 1)
-        //        lang_text_draw(61, 46, X_OFFSET, y_line, FONT_NORMAL_RED);
-        //    else if (demands->religion == 2)
-        //        lang_text_draw(61, 47, X_OFFSET, y_line, FONT_NORMAL_RED);
-        //    else if (demands->religion == 3)
-        //        lang_text_draw(61, 48, X_OFFSET, y_line, FONT_NORMAL_RED);
-        //    else
-        //        lang_text_draw(61, 49, X_OFFSET, y_line, FONT_NORMAL_GREEN);
-        ui["religion_info"].text((pcstr)lang_get_string(61, 125));
-        ui["religion_info"].font(FONT_NORMAL_BLACK_ON_DARK);
+        const house_demands &demands = g_city.houses;
+        std::pair<int, int> religion_status;
+        if (demands.religion == 1) { religion_status = {46, FONT_NORMAL_YELLOW}; }
+        else if (demands.religion == 2) { religion_status = {47, FONT_NORMAL_YELLOW}; }
+        else if (demands.religion == 3) { religion_status = {48, FONT_NORMAL_YELLOW}; }
+        else { religion_status = {49, FONT_NORMAL_BLACK_ON_DARK}; }
+
+        ui["religion_info"].text((pcstr)lang_get_string(61, religion_status.first));
+        ui["religion_info"].font(religion_status.second);
     }
 
     // finance

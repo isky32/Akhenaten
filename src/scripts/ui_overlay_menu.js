@@ -72,11 +72,6 @@ overlay_menu {
 			    OVERLAY_COUTHOUSE,
 			    OVERLAY_FOOD_STOCKS,
 			    OVERLAY_LABOR_ACCESS,
-			    // OVERLAY_LABOR
-			    // OVERLAY_ADMINISTRATION_PROBLEMS
-			    // OVERLAY_WATER_CROSSINGS
-			    // OVERLAY_EMPTY_HOUSING
-			    // OVERLAY_MAGISTRATE
 	    	]
 	    }
 
@@ -89,31 +84,6 @@ overlay_menu {
 			    OVERLAY_RELIGION_PTAH,
 			    OVERLAY_RELIGION_SETH,
 			    OVERLAY_RELIGION_BAST,
-	    	]
-	    }
-
-	    {
-	    	title: "Food"
-	    	ids[
-	    		// OVERLAY_GRAIN
-	    		// OVERLAY_CHICKPEAS
-				// OVERLAY_POMEGRANATES
-				// OVERLAY_FIGS
-				// OVERLAY_MEAT
-				// OVERLAY_GAME
-				// OVERLAY_POTTERY
-				// OVERLAY_JEWELRY
-				// OVERLAY_LINEN
-				// OVERLAY_BEER
-	    	]
-	    }
-
-	    {
-	    	title: "Other"
-	    	ids[
-				// OVERLAY_IRRIGATION
-				// OVERLAY_CITY_DEFENSES
-				// OVERLAY_HIDE_CLIFFS
 	    	]
 	    }
 	]

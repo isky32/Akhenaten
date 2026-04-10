@@ -41,6 +41,8 @@
 #include "message_dialog.h"
 #include "core/string.h"
 #include "city/military.h"
+#include "city/city_religion.h"
+#include "scenario/distant_battle.h"
 
 static ui::message_dialog_base* g_message_dialog_instance = nullptr;
 
@@ -84,10 +86,18 @@ void ui::message_dialog_base::init() {
 void ui::message_dialog_base::init_data(xstring text_id, int message_id, void (*background_callback)(void)) {
     this->debug_text_id = text_id;
 
+    // Reset history on new dialog
+    for (int i = 0; i < MAX_HISTORY; i++) {
+        history[i].text_id = 0;
+        history[i].scroll_position = 0;
+    }
+    num_history = 0;
+
     const lang_message &msg = lang_get_message(text_id);
 
     ui["button_close"].onclick([this] { button_close(); });
-    //ui["button_back"].onclick([this] { button_back(); });
+    ui["button_back"].onclick([this] { button_back(); });
+    ui["button_back"].enabled = (num_history > 0);
     ui["button_help"].onclick([this] { button_help(); });
 
     ui["button_advisor"].enabled = (player_msg.message_advisor != ADVISOR_NONE);
@@ -193,6 +203,22 @@ void ui::message_dialog_base::eventmsg_template_combine(pcstr template_ptr, T& b
         amount.printf("%d", value);
     }
 
+    bstring32 amount_granted;
+    amount_granted.printf("%d", phrase_modifier ? msg.req_amount_past : msg.req_amount);
+
+    bstring32 time_until_attack;
+    time_until_attack.printf("%d", g_distant_battle.battle.months_until_battle);
+
+    bstring32 travel_time;
+    travel_time.printf("%d", g_scenario.empire.distant_battle_kingdome_travel_months);
+
+    bstring64 god_name;
+    if (msg.god != GOD_UNKNOWN && msg.god < MAX_GODS) {
+        xstring god_key = bstring32("#god_", e_god_short_tokens.name((e_god_short)msg.god));
+        xstring localized = lang_xtext_from_key(god_key);
+        god_name = localized.c_str() ? localized.c_str() : "";
+    }
+
     text_tag_substitution tags[] = {
       {"[greeting]", (pcstr)lang_get_string(32, 11 + g_scenario.settings.campaign_scenario_id)},
       {"[player_name]", (pcstr)city_player_name()},
@@ -200,12 +226,12 @@ void ui::message_dialog_base::eventmsg_template_combine(pcstr template_ptr, T& b
       {"[city_name]", (pcstr)lang_get_string(195, city_name_id)},
       {"[a_foreign_army]", g_invasions.get_prop((e_enemy_type)msg.sender_faction).army_title},
       {"[amount]", amount.c_str()},
-      {"[amount_granted]", ""}, // TODO
+      {"[amount_granted]", amount_granted.c_str()},
       {"[item]", (pcstr)lang_get_string(23, 54 + (phrase_modifier ? msg.req_resource_past : msg.req_resource))},
       {"[time_allotted]", time.c_str()},
-      {"[time_until_attack]", ""}, // TODO
-      {"[travel_time]", ""},       // TODO
-      {"[god]", ""},               // TODO
+      {"[time_until_attack]", time_until_attack.c_str()},
+      {"[travel_time]", travel_time.c_str()},
+      {"[god]", god_name.c_str()},
     };
 
     text_fill_in_tags(template_ptr, buffer, tags);
@@ -374,11 +400,16 @@ void ui::message_dialog_base::cleanup() {
 }
 
 void ui::message_dialog_base::button_back() {
-    // if (num_history > 0) {
-    //     num_history--;
-    //     text_id = history[num_history].text_id;
-    //     rich_text.reset(history[num_history].scroll_position);
-    // }
+    if (num_history > 0) {
+        num_history--;
+        text_id = history[num_history].text_id;
+        auto* content_text_element = ui["content_text"].dcast_etext();
+        if (content_text_element) {
+            content_text_element->reset_scroll();
+        }
+        draw_background_content();
+        ui["button_back"].enabled = (num_history > 0);
+    }
 }
 
 void ui::message_dialog_base::button_close() {

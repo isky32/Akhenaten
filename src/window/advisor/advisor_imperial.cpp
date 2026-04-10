@@ -74,9 +74,12 @@ void ui::advisor_imperial_window::draw_foreground(UiFlags flags) {
 int ui::advisor_imperial_window::draw_background(UiFlags flags) {
     autoconfig_window::draw_background(flags);
 
-    ui["salary_rank"].onclick([] { 
-        set_salary_window::show(window_advisors_show, true); 
+    ui["salary_rank"].onclick([] {
+        set_salary_window::show(window_advisors_show, true);
     });
+
+    int stolen = g_city.finance.this_year.expenses.stolen;
+    ui["money_lost"].text_var("%d %s %s", stolen, ui::str(6, 0), ui::str(61, 164));
 
     return 0;
 }
