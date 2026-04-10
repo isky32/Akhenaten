@@ -214,8 +214,8 @@ void ui::message_dialog_base::eventmsg_template_combine(pcstr template_ptr, T& b
 
     bstring64 god_name;
     if (msg.god != GOD_UNKNOWN && msg.god < MAX_GODS) {
-        xstring god_key = bstring32("#god_", e_god_short_tokens.name((e_god_short)msg.god));
-        xstring localized = lang_xtext_from_key(god_key);
+        bstring32 god_key_str("#god_", e_god_short_tokens.name((e_god_short)msg.god));
+        xstring localized = lang_xtext_from_key(god_key_str.c_str());
         god_name = localized.c_str() ? localized.c_str() : "";
     }
 
